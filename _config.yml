@@ -51,6 +51,10 @@ permalink:                /:categories/:year-:month-:day-:title:output_ext
 # tracker:
 #   google_analytics: "UA-XXXXXXXXX-X"
 
+# Social media usernames
+github_username: troystaylor
+linkedin_username: troystaylor
+
 exclude:
   - _drafts
   - Gemfile
