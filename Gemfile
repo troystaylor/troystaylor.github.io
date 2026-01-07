@@ -7,6 +7,4 @@ gem "jekyll-feed"
 gem "jekyll-readme-index"
 gem "jemoji"
 gem "webrick"
-
-# GitHub Pages compatibility
-gem "github-pages", group: :jekyll_plugins
+gem "jekyll-remote-theme"
