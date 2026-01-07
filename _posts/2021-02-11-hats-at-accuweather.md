@@ -1,5 +1,5 @@
 ---
-title: "Hats I wear at AccuWeather"
+title: "Power Platform IndiePubs: Hats I wear at AccuWeather"
 author: Troy Taylor
 date: 2021-02-11
 category: General
