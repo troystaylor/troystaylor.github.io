@@ -63,8 +63,12 @@ exclude:
   - LICENSE
 
 collections:
+  posts:
+    output: true
+    sort_by: date
   pages:
     output: true
+    sort_by: date
     permalink: /:collection/:path/
 
 ordered_collections:
