@@ -3,7 +3,10 @@ layout: home
 title: Home
 ---
 
-# Welcome to Troy's Tech Blog
+# Power Platform Integrations
+## Sharing Is Caring
+
+<img src="/assets/images/profile.jpg" alt="Troy Taylor" width="150" style="border-radius: 50%; margin-bottom: 20px;" />
 
 This blog covers technical topics including:
 

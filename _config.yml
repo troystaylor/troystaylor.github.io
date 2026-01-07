@@ -1,11 +1,11 @@
 # Site Configuration
-title:            Troy's Tech Blog
-longtitle:        Troy Taylor's Technical Blog
+title:            Power Platform Integrations
+longtitle:        Power Platform Integrations - Sharing Is Caring
 author:           Troy Taylor
 email:            troy@example.com
 description: >
-  Technical blog covering Power Platform, connectors, MCP servers, 
-  Copilot Studio, and enterprise integrations.
+  Sharing Is Caring - Technical insights on Power Platform custom connectors,
+  MCP servers, Copilot Studio, and enterprise integrations.
 
 version:          1.0
 gitbook_version:  3.2.3
@@ -23,7 +23,7 @@ toc:
   h_max:   3
 
 # Favicon path
-favicon_path:     /assets/gitbook/images/favicon.ico
+favicon_path:     /assets/images/favicon.ico
 
 # Markdown configuration
 markdown:         kramdown
