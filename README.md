@@ -1,4 +1,4 @@
-# Troy Taylor's Technical Blog
+# Troy Taylor's Blog
 
 A Jekyll blog using the [jekyll-gitbook](https://github.com/sighingnow/jekyll-gitbook) theme, covering Power Platform, MCP servers, Copilot Studio, and enterprise integrations.
 
