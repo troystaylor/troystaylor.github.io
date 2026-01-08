@@ -6,7 +6,7 @@ category: Power Platform
 layout: post
 ---
 
-I'm excited to share my latest custom connector that brings Microsoft Bookings management directly into Copilot Studio through the Model Context Protocol (MCP). This connector exposes 30 natural language tools for managing booking businesses, services, staff, customers, and appointments—all accessible through conversational AI.
+I'm excited to share my latest custom connector that brings Microsoft Bookings management directly into Copilot Studio through the Model Context Protocol (MCP) - without having to wait for the Frontier server. This connector exposes 30 natural language tools for managing booking businesses, services, staff, customers, and appointments—all accessible through conversational AI.
 
 You can find the complete code in my [SharingIsCaring repository](https://github.com/troystaylor/SharingIsCaring/tree/main/Bookings).
 
