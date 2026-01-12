@@ -34,7 +34,7 @@ This mirrors how expert developers work—they don't memorize every API; they se
 
 Instead of browsing 45 tool definitions, the agent describes what it wants to accomplish:
 
-```json
+```javascript
 {
   "name": "search_tools",
   "arguments": {
@@ -47,7 +47,7 @@ Instead of browsing 45 tool definitions, the agent describes what it wants to ac
 
 Returns matching tools with relevance scores:
 
-```json
+```javascript
 {
   "intent": "create new customer account",
   "matchCount": 3,
@@ -69,7 +69,7 @@ The scoring algorithm matches against:
 
 Once the agent finds the right tool, it executes through `call_tool`:
 
-```json
+```javascript
 {
   "name": "call_tool",
   "arguments": {
@@ -92,7 +92,7 @@ This indirection provides:
 
 Complex operations often require multiple tools in sequence. Instead of multiple round-trips:
 
-```json
+```javascript
 {
   "name": "execute_workflow",
   "arguments": {
@@ -129,7 +129,7 @@ Key features:
 
 The connector stores successful patterns in a Dataverse table (`tst_agentinstructions`). The `get_patterns` tool surfaces this learned knowledge:
 
-```json
+```javascript
 {
   "name": "get_patterns",
   "arguments": {
