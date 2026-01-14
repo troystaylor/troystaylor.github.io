@@ -8,7 +8,7 @@ layout: post
 
 After building several MCP connectors—each exposing a handful of tools to Copilot Studio—I hit a wall. **Dataverse has 45 operations across 11 categories.** Simply wrapping them in MCP and handing them to an AI agent doesn't scale. The agent drowns in options, the context window bloats with tool definitions, and every request starts from zero.
 
-This post introduces a different approach: **post-MCP orchestration**. Instead of just exposing tools, we add a layer that helps agents *discover*, *compose*, and *learn from* tool usage. The result is the **Dataverse Power Orchestration Tools** connector—45 Dataverse tools plus 4 orchestration tools that fundamentally change how agents interact with enterprise data.
+This post introduces a different approach: **post-MCP orchestration**. Instead of just exposing tools, we add a layer that helps agents *discover*, *compose*, and *learn from* tool usage. The result is the **Dataverse Power Orchestration Tools** connector—45 Dataverse tools plus 4 orchestration tools (`discover_functions`, `invoke_tool`, `orchestrate_plan`, `learn_patterns`) that fundamentally change how agents interact with enterprise data.
 
 ## The Problem with "Just MCP"
 
@@ -21,22 +21,22 @@ Basic MCP connectors work great for focused domains—a Bookings connector with 
 
 Anthropic's [Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents) post notes that "the most successful implementations use simple, composable patterns." The orchestration pattern solves this:
 
-1. **Discovery first**: Agent uses `search_tools` to find relevant tools
-2. **Dynamic execution**: Agent uses `call_tool` to invoke discovered tools
-3. **Workflow composition**: Agent uses `execute_workflow` to chain operations
-4. **Continuous learning**: Agent uses `get_patterns` to surface what worked before
+1. **Discovery first**: Agent uses `discover_functions` to find relevant tools
+2. **Dynamic execution**: Agent uses `invoke_tool` to invoke discovered tools
+3. **Workflow composition**: Agent uses `orchestrate_plan` to chain operations
+4. **Continuous learning**: Agent uses `learn_patterns` to surface what worked before
 
 This mirrors how expert developers work—they don't memorize every API; they search docs, try things, and build on past successes.
 
 ## The 4 Orchestration Tools
 
-### `search_tools` — Discovery by Intent
+### `discover_functions` — Discovery by Intent
 
 Instead of browsing 45 tool definitions, the agent describes what it wants to accomplish:
 
 ```javascript
 {
-  "name": "search_tools",
+  "name": "discover_functions",
   "arguments": {
     "intent": "create new customer account",
     "category": "WRITE",
@@ -65,13 +65,13 @@ The scoring algorithm matches against:
 - **Description** (contains word = 3 points)
 - **Partial keyword match** (5 points)
 
-### `call_tool` — Dynamic Execution
+### `invoke_tool` — Dynamic Execution
 
-Once the agent finds the right tool, it executes through `call_tool`:
+Once the agent finds the right tool, it executes through `invoke_tool`:
 
 ```javascript
 {
-  "name": "call_tool",
+  "name": "invoke_tool",
   "arguments": {
     "toolName": "dataverse_create_row",
     "args": {
@@ -86,15 +86,15 @@ This indirection provides:
 - **Validation**: Confirms tool exists before execution
 - **Error handling**: Returns input schema if arguments are invalid
 - **Logging**: Tracks which tools are actually used
-- **Suggestions**: Guides agent to `search_tools` if tool not found
+- **Suggestions**: Guides agent to `discover_functions` if tool not found
 
-### `execute_workflow` — Multi-Step Sequences
+### `orchestrate_plan` — Multi-Step Sequences
 
 Complex operations often require multiple tools in sequence. Instead of multiple round-trips:
 
 ```javascript
 {
-  "name": "execute_workflow",
+  "name": "orchestrate_plan",
   "arguments": {
     "steps": [
       {
@@ -125,13 +125,13 @@ Key features:
 - **Atomic execution**: `stopOnError: true` halts on first failure
 - **Shared context**: Results accumulate for downstream steps
 
-### `get_patterns` — Organizational Learning
+### `learn_patterns` — Organizational Learning
 
-The connector stores successful patterns in a Dataverse table (`tst_agentinstructions`). The `get_patterns` tool surfaces this learned knowledge:
+The connector stores successful patterns in a Dataverse table (`tst_agentinstructions`). The `learn_patterns` tool surfaces this learned knowledge:
 
 ```javascript
 {
-  "name": "get_patterns",
+  "name": "learn_patterns",
   "arguments": {
     "category": "WRITE",
     "keyword": "account"
@@ -240,7 +240,7 @@ The orchestration layer sits atop a comprehensive Dataverse toolset organized in
 | **ASYNC** | 2 | `get_async_operation`, `list_async_operations` |
 | **ADVANCED** | 5 | `execute_action`, `execute_function`, `detect_duplicates`, `get_audit_history` |
 
-Each tool includes **category** and **keywords** metadata that `search_tools` uses for relevance matching. Full tool definitions with input schemas are in the [agents.md](https://github.com/troystaylor/SharingIsCaring/tree/main/Dataverse%20Power%20Orchestration%20Tools) file.
+Each tool includes **category** and **keywords** metadata that `discover_functions` uses for relevance matching. Full tool definitions with input schemas are in the [agents.md](https://github.com/troystaylor/SharingIsCaring/tree/main/Dataverse%20Power%20Orchestration%20Tools) file.
 
 ## In Practice
 
@@ -249,10 +249,10 @@ Each tool includes **category** and **keywords** metadata that `search_tools` us
 ```
 User: "I need to create a new customer with a primary contact"
 
-Agent: [calls search_tools with intent="create customer contact"]
+Agent: [calls discover_functions with intent="create customer contact"]
        Found: dataverse_create_row (score: 18), dataverse_upsert (score: 10)
 
-Agent: [calls execute_workflow]
+Agent: [calls orchestrate_plan]
        Step 1: dataverse_create_row → accounts → {accountid: "abc-123"}
        Step 2: dataverse_create_row → contacts → uses {{step1.accountid}}
 
@@ -266,7 +266,7 @@ Agent: "Created Contoso Ltd with John Smith as primary contact."
 ```
 User: "What's the best way to handle account creation?"
 
-Agent: [calls get_patterns with category="WRITE", keyword="account"]
+Agent: [calls learn_patterns with category="WRITE", keyword="account"]
        Returns: 3 learned patterns from organizational history
 
 Agent: "Based on how your organization uses this connector:
@@ -287,9 +287,9 @@ Agent: "Based on how your organization uses this connector:
                                     ▼ MCP JSON-RPC
 ┌──────────────────────────────────────────────────────────────────────┐
 │                    Orchestration Layer (4 tools)                     │
-│  ┌─────────────┐ ┌─────────────┐ ┌────────────────┐ ┌─────────────┐  │
-│  │search_tools │ │ call_tool   │ │execute_workflow│ │get_patterns │  │
-│  └─────────────┘ └─────────────┘ └────────────────┘ └─────────────┘  │
+│  ┌──────────────────┐ ┌─────────────┐ ┌─────────────────┐ ┌──────────────┐  │
+│  │discover_functions│ │ invoke_tool │ │orchestrate_plan │ │learn_patterns│  │
+│  └──────────────────┘ └─────────────┘ └─────────────────┘ └──────────────┘  │
 └──────────────────────────────────────────────────────────────────────┘
                                     │
                                     ▼ Dictionary Dispatch
@@ -315,10 +315,10 @@ private Dictionary<string, Func<JObject, Task<JObject>>> _toolHandlers;
 _toolHandlers = new Dictionary<string, Func<JObject, Task<JObject>>>
 {
     // Orchestration tools
-    [TOOL_SEARCH_TOOLS] = ExecuteSearchTools,
-    [TOOL_CALL_TOOL] = ExecuteCallTool,
-    [TOOL_EXECUTE_WORKFLOW] = ExecuteWorkflow,
-    [TOOL_GET_PATTERNS] = ExecuteGetPatterns,
+    [TOOL_DISCOVER_FUNCTIONS] = ExecuteDiscoverFunctions,
+    [TOOL_INVOKE_TOOL] = ExecuteInvokeTool,
+    [TOOL_ORCHESTRATE_PLAN] = ExecuteOrchestratePlan,
+    [TOOL_LEARN_PATTERNS] = ExecuteLearnPatterns,
     
     // Dataverse tools (45 more)
     [TOOL_LIST_ROWS] = ExecuteListRows,
@@ -339,10 +339,10 @@ private async Task<JObject> ExecuteToolByName(string toolName, JObject args)
 
 ### Relevance Scoring Algorithm
 
-`search_tools` scores tools against intent keywords:
+`discover_functions` scores tools against intent keywords:
 
 ```csharp
-private async Task<JObject> ExecuteSearchTools(JObject args)
+private async Task<JObject> ExecuteDiscoverFunctions(JObject args)
 {
     var intent = args["intent"]?.ToString()?.ToLowerInvariant() ?? "";
     var category = args["category"]?.ToString()?.ToLowerInvariant();
@@ -389,7 +389,7 @@ private async Task<JObject> ExecuteSearchTools(JObject args)
 
 ### Workflow Variable Substitution
 
-`execute_workflow` uses `{{variable.path}}` syntax to reference previous step results:
+`orchestrate_plan` uses `{{variable.path}}` syntax to reference previous step results:
 
 ```csharp
 private JObject ResolveWorkflowVariables(JObject args, JObject context)
@@ -484,13 +484,13 @@ private async Task LogLearnedPatternAsync(string patternType, JArray steps, JArr
 |--------|-----------|------------------|
 | **Tool definitions in context** | 45 tools × ~200 tokens = **9,000 tokens** | 4 orchestration tools = **800 tokens** |
 | **Relevant tools surfaced** | All 45 (model picks) | Top 3-5 by relevance |
-| **Multi-step workflows** | N round-trips | 1 round-trip via `execute_workflow` |
+| **Multi-step workflows** | N round-trips | 1 round-trip via `orchestrate_plan` |
 | **Pattern learning** | None | Accumulated in Dataverse |
 | **Tool updates** | Redeploy connector | Update Dataverse record |
 
 For a typical "create account + contact + opportunity" flow:
 - **Static**: 3 tool calls = 3 round-trips, ~15 seconds
-- **Orchestrated**: 1 `execute_workflow` call = 1 round-trip, ~5 seconds
+- **Orchestrated**: 1 `orchestrate_plan` call = 1 round-trip, ~5 seconds
 
 ## Setup and Configuration
 
@@ -511,7 +511,7 @@ For a typical "create account + contact + opportunity" flow:
 
 1. Add connector as action in your agent
 2. The `/mcp` endpoint enables tool discovery
-3. Test with: "Search for tools to create accounts"
+3. Test with: "Discover functions to create accounts"
 
 ## Real-World Use Cases
 
@@ -554,3 +554,7 @@ The complete connector is available in my [SharingIsCaring](https://github.com/t
 The orchestration pattern represents a shift from "give the AI all the tools" to "teach the AI to find and compose tools." By adding discovery, dynamic execution, and organizational learning, we're building agents that get smarter over time—not just at using Dataverse, but at understanding *how your organization* uses Dataverse.
 
 What orchestration patterns would you add? Let me know on [LinkedIn](https://www.linkedin.com/in/introtroytaylor/) or [GitHub](https://github.com/troystaylor)!
+
+---
+
+> **Update (January 14, 2026):** The orchestration tools have been renamed to use more neutral terminology that better aligns with the Power Platform community. This post has been updated to reflect the new naming: `discover_functions`, `invoke_tool`, `orchestrate_plan`, and `learn_patterns`. The concepts and implementation remain unchanged.
