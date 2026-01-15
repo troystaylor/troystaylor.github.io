@@ -83,7 +83,7 @@ The architecture is called "chained MCP" – the connector is both an MCP server
 
 Search Microsoft's documentation to find the Graph endpoint you need:
 
-```json
+```javascript
 {
   "query": "list my calendar events for this week",
   "category": "calendar"
@@ -92,7 +92,7 @@ Search Microsoft's documentation to find the Graph endpoint you need:
 
 Response includes everything you need:
 
-```json
+```javascript
 {
   "success": true,
   "operationCount": 3,
@@ -119,7 +119,7 @@ Discovery results cache for 10 minutes to reduce redundant calls.
 
 Execute any Graph request with the signed-in user's permissions:
 
-```json
+```javascript
 {
   "endpoint": "/me/calendar/events",
   "method": "GET",
@@ -138,7 +138,7 @@ The connector handles the tedious parts:
 
 Response includes pagination metadata:
 
-```json
+```javascript
 {
   "success": true,
   "hasMore": true,
@@ -152,7 +152,7 @@ Response includes pagination metadata:
 
 Run multiple operations in one call – perfect for gathering related data:
 
-```json
+```javascript
 {
   "requests": [
     { "id": "profile", "endpoint": "/me", "method": "GET" },
@@ -164,7 +164,7 @@ Run multiple operations in one call – perfect for gathering related data:
 
 Response bundles everything:
 
-```json
+```javascript
 {
   "success": true,
   "batchSize": 3,
@@ -184,7 +184,7 @@ Batch calls are capped at 20 requests (Graph's limit). Your agent can gather a u
 
 Permission errors distinguish between connector issues and org policy issues:
 
-```json
+```javascript
 {
   "success": false,
   "errorType": "permission_denied",
