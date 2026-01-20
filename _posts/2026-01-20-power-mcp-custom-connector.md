@@ -95,22 +95,18 @@ sequenceDiagram
 ```mermaid
 flowchart TD
     A[Copilot Studio Agent] --> B[/mcp POST/]
-    B --> C[InvokeMCP (routeRequestToCode)]
+    B --> C[InvokeMCP]
     C --> D[script.csx]
-    D -->|initialize| E[Return capabilities]
-    D -->|tools/list| F[BuildToolsList]
-    D -->|tools/call| G{ExecuteToolAsync}
-    G -->|echo| H[ExecuteEchoTool]
-    G -->|get_data| I[ExecuteGetData]
-    G -->|get_ticket| I
-    I --> J[SendExternalRequestAsync]
-    H --> K[CreateJsonRpcResponse]
-    J --> K
-    K --> L[Return to Agent]
-
-    style A fill:#e1f5fe,stroke:#0288d1
-    style D fill:#fff3e0,stroke:#fb8c00
-    style G fill:#ede7f6,stroke:#5e35b1
+    D --> E[Return capabilities]
+    D --> F[Build tools]
+    D --> G{Execute tool}
+    G --> H[Execute echo]
+    G --> I[Execute get_data]
+    G --> J[Execute get_ticket]
+    I --> K[Send external request]
+    H --> L[Create JSON-RPC response]
+    K --> L
+    L --> M[Return to Agent]
 ```
 
 ## Supported MCP methods
@@ -151,7 +147,59 @@ using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-...
-```
 
-... (rest unchanged)
+// Minimal MCP handler for Power Platform custom connector custom code
+public class Script : ScriptBase
+{
+    private const string ServerName = "power-mcp-server"; // lowercase-with-dashes
+    private const string ServerVersion = "1.0.0";
+    private const string ServerTitle = "Power MCP Server";
+    private const string ServerDescription = "Power Platform custom connector implementing MCP";
+    private const string ProtocolVersion = "2025-11-25";
+    private const string ServerInstructions = ""; // optional guidance
+
+    private const string APP_INSIGHTS_CONNECTION_STRING = ""; // optional
+
+    public override async Task<HttpResponseMessage> ExecuteAsync()
+    {
+        var correlationId = Guid.NewGuid().ToString();
+        string body = await this.Context.Request.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var request = JObject.Parse(body);
+        var method = request.Value<string>("method");
+        var id = request["id"];
+
+        try
+        {
+            switch (method)
+            {
+                case "initialize":
+                    return CreateJsonRpcSuccessResponse(id, new JObject
+                    {
+                        ["protocolVersion"] = ProtocolVersion,
+                        ["capabilities"] = new JObject
+                        {
+                            ["tools"] = new JObject { ["listChanged"] = false },
+                            ["logging"] = new JObject()
+                        },
+                        ["serverInfo"] = new JObject
+                        {
+                            ["name"] = ServerName,
+                            ["version"] = ServerVersion,
+                            ["title"] = ServerTitle,
+                            ["description"] = ServerDescription
+                        },
+                        ["instructions"] = string.IsNullOrWhiteSpace(ServerInstructions) ? null : ServerInstructions
+                    });
+
+                case "notifications/initialized":
+                case "notifications/cancelled":
+                case "ping":
+                case "logging/setLevel":
+                    return CreateJsonRpcSuccessResponse(id, new JObject());
+
+                case "tools/list":
+                    return CreateJsonRpcSuccessResponse(id, new JObject { ["tools"] = BuildToolsList() });
+
+                case "tools/call":
+                    var paramsObj = request["params"] as JObject;
+                    var name = paramsObj?path Steps omitted for brevity...
