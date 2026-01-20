@@ -1,0 +1,14 @@
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+
+// Convert fenced code blocks with language-mermaid to mermaid divs
+for (const code of document.querySelectorAll('code.language-mermaid')) {
+  const pre = code.parentElement;
+  const wrapper = document.createElement('div');
+  wrapper.classList.add('mermaid');
+  wrapper.textContent = code.textContent;
+  pre.replaceWith(wrapper);
+}
+
+mermaid.initialize({ startOnLoad: true, securityLevel: 'loose' });
+</script>
