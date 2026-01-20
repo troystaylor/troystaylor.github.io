@@ -139,67 +139,85 @@ paths:
           description: MCP response stream
 ```
 
-## Custom code: minimal handler
+## MCP JSON-RPC examples
 
-```csharp
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-// Minimal MCP handler for Power Platform custom connector custom code
-public class Script : ScriptBase
+**tools/list**
+```javascript
 {
-    private const string ServerName = "power-mcp-server"; // lowercase-with-dashes
-    private const string ServerVersion = "1.0.0";
-    private const string ServerTitle = "Power MCP Server";
-    private const string ServerDescription = "Power Platform custom connector implementing MCP";
-    private const string ProtocolVersion = "2025-11-25";
-    private const string ServerInstructions = ""; // optional guidance
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/list"
+}
+```
 
-    private const string APP_INSIGHTS_CONNECTION_STRING = ""; // optional
+**tools/call → echo**
+```javascript
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/call",
+  "params": {
+        "name": "echo",
+    "arguments": {
+        "message": "Hello from MCP"
+    }
+  }
+}
+```
 
-    public override async Task<HttpResponseMessage> ExecuteAsync()
-    {
-        var correlationId = Guid.NewGuid().ToString();
-        string body = await this.Context.Request.Content.ReadAsStringAsync().ConfigureAwait(false);
-        var request = JObject.Parse(body);
-        var method = request.Value<string>("method");
-        var id = request["id"];
+## Setup steps
 
-        try
-        {
-            switch (method)
-            {
-                case "initialize":
-                    return CreateJsonRpcSuccessResponse(id, new JObject
-                    {
-                        ["protocolVersion"] = ProtocolVersion,
-                        ["capabilities"] = new JObject
-                        {
-                            ["tools"] = new JObject { ["listChanged"] = false },
-                            ["logging"] = new JObject()
-                        },
-                        ["serverInfo"] = new JObject
-                        {
-                            ["name"] = ServerName,
-                            ["version"] = ServerVersion,
-                            ["title"] = ServerTitle,
-                            ["description"] = ServerDescription
-                        },
-                        ["instructions"] = string.IsNullOrWhiteSpace(ServerInstructions) ? null : ServerInstructions
-                    });
+1. **Import connector** from [SharingIsCaring > Power MCP Template](https://github.com/troystaylor/SharingIsCaring/tree/main/Connector-Code/Power%20MCP%20Template)
+2. **Use provided swagger** (`apiDefinition.swagger.json`, path `/`, basePath `/mcp`, `x-ms-agentic-protocol: mcp-streamable-1.0`)
+3. **Use provided apiProperties** to route to custom code (`InvokeMCP`)
+4. **Paste `script.csx`** into custom code
+5. **Configure OAuth** for your backend (Dataverse, Graph, custom API)
+6. **Create a connection** and add the connector as an **action** in Copilot Studio
 
-                case "notifications/initialized":
-                case "notifications/cancelled":
-                case "ping":
-                case "logging/setLevel":
-                    return CreateJsonRpcSuccessResponse(id, new JObject());
+## Testing
 
-                case "tools/list":
-                    return CreateJsonRpcSuccessResponse(id, new JObject { ["tools"] = BuildToolsList() });
+```bash
+# initialize
+curl -X POST https://your-connector/mcp -H "Content-Type: application/json" \
+    -d '{"jsonrpc":"2.0","method":"initialize","id":1,"params":{"protocolVersion":"2025-11-25","clientInfo":{"name":"test"}}}'
 
-                case "tools/call":
-                    var paramsObj = request["params"] as JObject;
-                    var name = paramsObj?path Steps omitted for brevity...
+# list tools
+curl -X POST https://your-connector/mcp -H "Content-Type: application/json" \
+    -d '{"jsonrpc":"2.0","method":"tools/list","id":2}'
+
+# call echo
+curl -X POST https://your-connector/mcp -H "Content-Type: application/json" \
+    -d '{"jsonrpc":"2.0","method":"tools/call","id":3,"params":{"name":"echo","arguments":{"message":"Hello"}}}'
+```
+
+Copilot Studio: add connector as action → tools surface automatically → test with natural language.
+
+## Error handling and stateless behavior
+
+- Protocol errors (`-32700`, `-32601`, `-32602`, `-32603`) for malformed/unknown methods
+- Tool errors returned as successful tool result objects so the model can reason
+- `listChanged=false`; no server-side cache; safe in multi-tenant scenarios
+
+## Security
+
+- **Least privilege**: connector forwards the user's `Authorization` header (OBO), honoring Entra permissions
+- **API keys/tokens**: use connection parameters (masked if secret); do not hardcode
+- **Headers**: the connector forwards `Authorization`
+- **Zero trust**: validate required args (`RequireArgument`) and fail fast on unknown tools
+
+## Limitations
+
+- **Static tools**: no discovery; tools defined in `BuildToolsList`
+- **No streaming**: `tools/call` returns full result; no partial/progress notifications
+- **No notifications/resources/prompts content**: stubs return empty arrays
+- **Payload size**: large responses may hit connector limits—paginate and filter (`$top`, server-side paging)
+- **Timeouts/retries**: no retries/backoff; long-running calls may time out
+- **JSON only**: responses parsed as JSON; non-JSON APIs must be transformed
+
+## Resources
+
+- Advanced (coming soon): Orchestration patterns post
+- GitHub: [Connector-Code/Power MCP Template](https://github.com/troystaylor/SharingIsCaring/tree/main/Connector-Code/Power%20MCP%20Template)
+- MCP: [modelcontextprotocol.io](https://modelcontextprotocol.io/)
+
+#PowerMCP #CopilotStudio #MCP #PowerPlatform #AIAgents
