@@ -2,7 +2,7 @@
 layout: post
 title: "Humanizer: Copilot Studio connector for AI-sounding text"
 date: 2026-01-23 09:00:00 -0500
-categories: [Developer Tools, Content Quality]
+categories: [Power Platform]
 tags: [Humanizer, Content lint, PowerShell, GitHub Actions, Power Platform]
 description: "Use the Humanizer MCP Power Platform connector in Copilot Studio to detect AI writing patterns and guide rewrites."
 ---
@@ -115,3 +115,4 @@ Edit `AIPatterns` inside `Humanizer/script.csx` to add or adjust patterns (24 pr
 - Humanizer connector: [SharingIsCaring/Humanizer](https://github.com/troystaylor/SharingIsCaring/tree/main/Humanizer)
 - Tools: `humanize`, `detect_patterns`, `get_patterns`; Prompts: `humanize_text`, `quick_check`, `rewrite_as_human`, `match_voice`
 - Wikipedia: [Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing)
+
