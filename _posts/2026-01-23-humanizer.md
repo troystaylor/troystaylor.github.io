@@ -28,7 +28,7 @@ Humanizer is an **MCP-compliant Power Platform custom connector** (Copilot Studi
 > Before responding, call the `humanize` action with the draft text. If `aiScore` > 25, revise using `rewriteGuidelines` and respond with the improved text.
 
 **Call `humanize` (full analysis + guidelines)**
-```json
+```javascript
 {
   "jsonrpc": "2.0",
   "method": "tools/call",
@@ -45,7 +45,7 @@ Humanizer is an **MCP-compliant Power Platform custom connector** (Copilot Studi
 ```
 
 **Call `detect_patterns` (fast check by category)**
-```json
+```javascript
 {
   "jsonrpc": "2.0",
   "method": "tools/call",
@@ -61,7 +61,7 @@ Humanizer is an **MCP-compliant Power Platform custom connector** (Copilot Studi
 ```
 
 **Call `get_patterns` (educate the user/agent)**
-```json
+```javascript
 {
   "jsonrpc": "2.0",
   "method": "tools/call",
@@ -77,7 +77,7 @@ Humanizer is an **MCP-compliant Power Platform custom connector** (Copilot Studi
 ```
 
 ### Sample response (`humanize`)
-```json
+```javascript
 {
   "success": true,
   "aiScore": 42,
@@ -115,6 +115,7 @@ Edit `AIPatterns` inside `Humanizer/script.csx` to add or adjust patterns (24 pr
 - Humanizer connector: [SharingIsCaring/Humanizer](https://github.com/troystaylor/SharingIsCaring/tree/main/Humanizer)
 - Tools: `humanize`, `detect_patterns`, `get_patterns`; Prompts: `humanize_text`, `quick_check`, `rewrite_as_human`, `match_voice`
 - Wikipedia: [Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing)
+
 
 
 
