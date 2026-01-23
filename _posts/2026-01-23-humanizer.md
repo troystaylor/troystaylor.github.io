@@ -20,7 +20,7 @@ Humanizer is an **MCP-compliant Power Platform custom connector** (Copilot Studi
 
 ## Setup (Copilot Studio)
 1. Import the **Humanizer** custom connector into your Power Platform environment using `Humanizer/apiProperties.json` and `Humanizer/script.csx` from the repo.
-2. In **Copilot Studio**, go to **Actions → Add an action → Power Platform connector** and select **Humanizer**.
+2. In **Copilot Studio**, go to **Tools → Add a tool → Model Context Protocol → Invoke Humanizer MCP**.
 3. Create a connection (no auth required by default; add App Insights connection string in `script.csx` if you want telemetry).
 
 ## Usage (Copilot Studio)
@@ -115,5 +115,6 @@ Edit `AIPatterns` inside `Humanizer/script.csx` to add or adjust patterns (24 pr
 - Humanizer connector: [SharingIsCaring/Humanizer](https://github.com/troystaylor/SharingIsCaring/tree/main/Humanizer)
 - Tools: `humanize`, `detect_patterns`, `get_patterns`; Prompts: `humanize_text`, `quick_check`, `rewrite_as_human`, `match_voice`
 - Wikipedia: [Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing)
+
 
 
