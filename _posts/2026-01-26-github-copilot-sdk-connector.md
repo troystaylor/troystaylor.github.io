@@ -79,7 +79,7 @@ Power Platform → Cloudflare Tunnel → localhost:3000 → GitHub Copilot SDK
 > Maintain one Copilot SDK session per conversation. If missing, call `copilot_create_session` with `sessionId` = conversationId and `model`. Use `copilot_send` to answer user requests. Use `copilot_list_sessions` to reuse sessions; clean up with `copilot_delete_session`.
 
 ### Tool calling pattern (Copilot Studio)
-```json
+```javascript
 {
   "jsonrpc": "2.0",
   "method": "tools/call",
@@ -111,7 +111,7 @@ Power Platform → Cloudflare Tunnel → localhost:3000 → GitHub Copilot SDK
 > **Note:** Copilot CLI defaults to `--allow-all`, enabling file system and git tools. Configure SDK client `tools` to disable or limit, or run CLI with restricted tools. This connector forwards JSON-RPC; it does not add extra sandboxing.
 
 ## Example: create session
-```json
+```javascript
 {
   "jsonrpc": "2.0",
   "method": "tools/call",
