@@ -9,7 +9,7 @@ tags: [Azure Cost Management, MCP, Connector, Copilot Studio, Power Platform, Po
 ## Overview
 Bring Azure Cost Management into Copilot Studio and Power Platform with a full MCP server and custom connector. Query costs, forecasts, budgets, alerts, exports, and more across subscriptions, resource groups, management groups, billing accounts, and benefit scopes. Pair it with the native Power BI Azure Cost Management connector for dashboards and ad hoc analysis: [Connect Azure Cost Management to Power BI](https://learn.microsoft.com/en-us/power-bi/connect-data/desktop-connect-azure-cost-management).
 
-> repo: [Azure Cost Management connector](https://github.com/troystaylor/SharingIsCaring/tree/main/Azure%20Cost%20Management)
+> My repo: [Azure Cost Management connector](https://github.com/troystaylor/SharingIsCaring/tree/main/Azure%20Cost%20Management)
 
 ## What You Get
 - **58 operations** covering cost queries, forecasts, budgets, alerts, exports, views, scheduled actions, allocation rules, benefit utilization, reports, settings, price sheets
@@ -25,10 +25,7 @@ Bring Azure Cost Management into Copilot Studio and Power Platform with a full M
 
 ## Deploy the Connector
 ```powershell
-pac connector create --environment <environment-id> `
-  --api-definition-file apiDefinition.swagger.json `
-  --api-properties-file apiProperties.json `
-  --script-file script.csx
+pac connector create --environment <environment-id> --api-definition-file apiDefinition.swagger.json --api-properties-file apiProperties.json --script-file script.csx
 ```
 
 When creating a connection, sign in with the app registration. The swagger and script are in the repo folder.
