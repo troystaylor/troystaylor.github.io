@@ -32,6 +32,28 @@
 }
 
 .markdown-section pre code span {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+/* Rouge / highlight overrides */
+.markdown-section .highlight,
+.markdown-section .highlight pre,
+.markdown-section .highlight code {
+  background: var(--code-bg) !important;
+  color: var(--code-fg) !important;
+  border: none !important;
+}
+
+.markdown-section .highlight code span {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+/* highlight.js fallback */
+.markdown-section pre code.hljs,
+.markdown-section pre code.hljs span {
+  background: transparent !important;
   color: inherit !important;
 }
 
