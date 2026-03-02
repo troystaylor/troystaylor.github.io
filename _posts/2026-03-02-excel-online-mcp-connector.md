@@ -27,46 +27,35 @@ The Graph API provides comprehensive Excel capabilities, but traditionally requi
 
 ## MCP Tools and Operations
 
-The connector exposes six categories of tools with enum-based parameters that provide over 150 discrete operations for complete Excel management:
+The connector exposes 17 tools across six categories with enum-based parameters that provide over 150 discrete operations for complete Excel management, including:
 
-### Workbook Management (4 tools)
+### Workbook Management
 - `create_workbook` - Create new workbook in OneDrive or SharePoint
 - `get_workbook` - Get workbook metadata and properties
 - `list_worksheets` - List all sheets in a workbook
-- `create_session` - Create persistent session for batching operations
 
-### Worksheet Operations (6 tools)
+### Worksheet Operations
 - `get_worksheet` - Get worksheet details by name or ID
 - `add_worksheet` - Add new worksheet to workbook
 - `update_worksheet` - Rename or reposition worksheet
 - `delete_worksheet` - Remove worksheet from workbook
-- `get_used_range` - Get the smallest range containing all used cells
-- `calculate_worksheet` - Trigger recalculation of formulas
 
-### Range Operations (8 tools)
+### Range Operations
 - `get_range` - Get values and properties from a cell range
 - `update_range` - Set values, formulas, or formatting
 - `clear_range` - Clear values, formats, or both
 - `insert_range` - Insert cells and shift existing cells
 - `delete_range` - Delete cells and shift remaining cells
-- `merge_range` - Merge cells into single cell
-- `unmerge_range` - Unmerge previously merged cells
-- `format_range` - Apply number formats, colors, fonts, and borders
 
-### Table Operations (6 tools)
+### Table Operations
 - `list_tables` - List all tables in worksheet or workbook
-- `get_table` - Get table details and properties
 - `create_table` - Convert range to structured table
 - `add_table_row` - Append row to table
-- `add_table_column` - Add column to table
-- `delete_table` - Remove table (keeps data)
 
-### Named Items (2 tools)
-- `list_named_items` - List all named ranges and constants
+### Named Items
 - `add_named_item` - Create named range or constant
 
-### Chart Operations (2 tools)
-- `list_charts` - List all charts in worksheet
+### Chart Operations
 - `create_chart` - Create new chart from data range
 
 ## Conversational Excel Automation
