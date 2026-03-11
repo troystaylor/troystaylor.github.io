@@ -61,7 +61,7 @@ Here's the relevant section from the [fixed apiProperties.json](https://github.c
         "type": "oauthSetting",
         "oAuthSettings": {
           "identityProvider": "oauth2generic",
-          "clientId": "[[YOUR_CLIENT_ID]]",
+          "clientId": "YOUR_CLIENT_ID",
           "scopes": ["refresh_token api"],
           "redirectMode": "GlobalPerConnector",
           "properties": {
