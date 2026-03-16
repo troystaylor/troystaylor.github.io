@@ -23,19 +23,18 @@ Copilot reads the skill's `SKILL.md`, runs the underlying script with the right 
 
 ## Get started
 
-Run this one-liner in a PowerShell terminal to bootstrap everything:
+Download and run the script, pointing it at the SharingIsCaring repo to install the `install-skills` skill itself:
 
 ```powershell
-irm https://raw.githubusercontent.com/troystaylor/SharingIsCaring/main/skills/install-skills/install-skills.ps1 | iex
+irm https://raw.githubusercontent.com/troystaylor/SharingIsCaring/main/skills/install-skills/install-skills.ps1 -OutFile "$env:TEMP\install-skills.ps1"
+& "$env:TEMP\install-skills.ps1" -RepoUrl "https://github.com/troystaylor/SharingIsCaring" -SkillsSubPath "skills"
 ```
 
-This clones the [SharingIsCaring](https://github.com/troystaylor/SharingIsCaring) skills folder and registers it in VS Code. After a restart, Copilot picks up the `install-skills` skill automatically. From that point forward, ask Copilot to install any skills repository and it handles the rest.
+This clones the SharingIsCaring repo, registers the skills path in VS Code, and gives Copilot access to the `install-skills` skill. Restart VS Code and you're ready to go.
 
-You can also clone the repo manually and run the script directly:
+From that point forward, ask Copilot to install any skills repository in natural language. For example, to install Microsoft's official Copilot Studio skills:
 
-```powershell
-.\install-skills.ps1
-```
+> "Install skills from https://github.com/microsoft/skills-for-copilot-studio"
 
 ## How the skill works
 
