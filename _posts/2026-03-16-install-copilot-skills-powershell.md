@@ -26,7 +26,7 @@ Copilot reads the skill's `SKILL.md`, runs the underlying script with the right 
 Run this one-liner in a PowerShell terminal to bootstrap everything:
 
 ```powershell
-irm https://raw.githubusercontent.com/troystaylor/SharingIsCaring/main/install-skills.ps1 | iex
+irm https://raw.githubusercontent.com/troystaylor/SharingIsCaring/main/skills/install-skills/install-skills.ps1 | iex
 ```
 
 This clones the [SharingIsCaring](https://github.com/troystaylor/SharingIsCaring) skills folder and registers it in VS Code. After a restart, Copilot picks up the `install-skills` skill automatically. From that point forward, ask Copilot to install any skills repository and it handles the rest.
@@ -59,7 +59,7 @@ The body of the file includes a procedure section with exact commands Copilot sh
 
 ### The PowerShell script
 
-The [install-skills.ps1](https://github.com/troystaylor/SharingIsCaring/blob/main/skills/install-skills.ps1) script does three things:
+The [install-skills.ps1](https://github.com/troystaylor/SharingIsCaring/blob/main/skills/install-skills/install-skills.ps1) script does three things:
 
 1. **Creates the skills directory** at `%USERPROFILE%\.copilot\skills` if it doesn't exist
 2. **Clones the repository** (or pulls latest if already cloned)
@@ -167,7 +167,7 @@ Microsoft's [skills-for-copilot-studio](https://github.com/microsoft/skills-for-
 ## Resources
 
 - [install-skills skill and script](https://github.com/troystaylor/SharingIsCaring/tree/main/skills/install-skills)
-- [install-skills.ps1 script](https://github.com/troystaylor/SharingIsCaring/blob/main/install-skills.ps1)
+- [install-skills.ps1 script](https://github.com/troystaylor/SharingIsCaring/blob/main/skills/install-skills/install-skills.ps1)
 - [Microsoft skills-for-copilot-studio repository](https://github.com/microsoft/skills-for-copilot-studio)
 - [GitHub Copilot agent mode documentation](https://code.visualstudio.com/docs/copilot/chat/chat-agent-mode)
 - [SharingIsCaring repository](https://github.com/troystaylor/SharingIsCaring)
