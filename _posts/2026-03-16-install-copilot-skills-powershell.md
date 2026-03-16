@@ -58,7 +58,9 @@ The body of the file includes a procedure section with exact commands Copilot sh
 
 ### The PowerShell script
 
-The [install-skills.ps1](https://github.com/troystaylor/SharingIsCaring/blob/main/skills/install-skills/install-skills.ps1) script does three things:
+The [install-skills.ps1](https://github.com/troystaylor/SharingIsCaring/blob/main/skills/install-skills/install-skills.ps1) script has two modes: **global** (default) and **workspace**.
+
+In global mode, the script:
 
 1. **Creates the skills directory** at `%USERPROFILE%\.copilot\skills` if it doesn't exist
 2. **Clones the repository** (or pulls latest if already cloned)
@@ -66,14 +68,23 @@ The [install-skills.ps1](https://github.com/troystaylor/SharingIsCaring/blob/mai
 
 The script detects whether you're running VS Code Insiders or stable and updates the correct `settings.json` automatically. If neither exists, it creates a new settings file for Insiders.
 
+In workspace mode (`-Workspace`), the script:
+
+1. **Clones the repository** to a temporary location
+2. **Copies individual skill folders** into `.github/skills/` in the current workspace
+3. **Cleans up** the temporary clone
+
+Workspace skills don't need `settings.json` changes — VS Code auto-discovers skills under `.github/skills/` in the workspace root.
+
 ## Use it with different repositories
 
-The script accepts two parameters:
+The script accepts three parameters:
 
 | Parameter | Default | Purpose |
-|-----------|---------|---------|
+|-----------|---------|--------|
 | `-RepoUrl` | `https://github.com/microsoft/skills-for-copilot-studio` | The Git repository to clone |
 | `-SkillsSubPath` | `skills` | Path inside the repo where skill files live |
+| `-Workspace` | (switch) | Install to `.github/skills/` in the current workspace instead of globally |
 
 Point it at any skills repository:
 
@@ -92,7 +103,17 @@ Or skip the terminal entirely and tell Copilot:
 
 > "Install skills from https://github.com/org/custom-skills with skills at the root"
 
-Each invocation adds a separate path to `chat.agentSkillsLocations`, so you can stack multiple skill repositories without overwriting previous ones.
+Each global invocation adds a separate path to `chat.agentSkillsLocations`, so you can stack multiple skill repositories without overwriting previous ones.
+
+### Workspace mode
+
+Add `-Workspace` to install skills directly into the current project:
+
+```powershell
+& "$env:USERPROFILE\.copilot\skills\SharingIsCaring\skills\install-skills.ps1" -Workspace
+```
+
+This copies skill folders into `.github/skills/` at the workspace root. VS Code auto-discovers skills in that location, so there's nothing to configure. Workspace skills travel with the repo — every contributor gets them on clone.
 
 ## Inside the script
 
