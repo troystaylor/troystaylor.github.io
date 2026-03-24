@@ -14,7 +14,7 @@ The Azure AI Search MCP connector gives Copilot Studio agents full access to the
 
 ## Tools
 
-The connector exposes three tools to the planner:
+The connector exposes three tools to the orchestrator:
 
 | Tool | Description |
 |------|-------------|
@@ -27,10 +27,10 @@ The connector exposes three tools to the planner:
 ```
 User: "Search my products index for wireless headphones"
 
-1. Planner calls scan_search({query: "search documents"})
+1. Orchestrator calls scan_search({query: "search documents"})
    → Returns: search_documents (POST /indexes/{indexName}/docs/search)
 
-2. Planner calls launch_search({
+2. Orchestrator calls launch_search({
      endpoint: "/indexes/products/docs/search",
      method: "POST",
      body: { search: "wireless headphones", queryType: "semantic" }
@@ -38,7 +38,7 @@ User: "Search my products index for wireless headphones"
    → Returns: matching documents with highlights and scores
 ```
 
-The planner discovers the right operation first, then executes it with the correct endpoint and parameters. No upfront schema loading required.
+The orchestrator discovers the right operation first, then executes it with the correct endpoint and parameters. No upfront schema loading required.
 
 ## Operations (37)
 
@@ -118,7 +118,7 @@ The capability index covers the full API surface:
 
 ## MCP resources
 
-Beyond tools, the connector exposes eight MCP resources for knowledge grounding. The planner can read these to understand what's available before making tool calls.
+Beyond tools, the connector exposes eight MCP resources for knowledge grounding. The orchestrator can read these to understand what's available before making tool calls.
 
 | Resource | URI | Description |
 |----------|-----|-------------|
@@ -139,7 +139,41 @@ Beyond tools, the connector exposes eight MCP resources for knowledge grounding.
 
 ## Setting up the connector
 
-### 1. Create the custom connector
+### 1. Configure the service URL
+
+Update the `host` field in `apiDefinition.swagger.json` with your Azure AI Search service name:
+
+```json
+"host": "your-service.search.windows.net"
+```
+
+### 2. Deploy the connector
+
+#### Option A: PAC CLI (recommended)
+
+```bash
+# Authenticate to your Power Platform environment (if not authenticated)
+pac auth create --environment "https://yourorg.crm.dynamics.com"
+
+# Create the connector
+pac connector create --api-definition-file apiDefinition.swagger.json --api-properties-file apiProperties.json --script-file script.csx
+```
+
+To update an existing connector:
+
+```bash
+pac connector update --connector-id <CONNECTOR_ID> --api-definition-file apiDefinition.swagger.json --api-properties-file apiProperties.json --script-file script.csx
+```
+
+If `--script-file` fails with a compute provisioning error, deploy without it and add the code manually:
+
+```bash
+pac connector create --api-definition-file apiDefinition.swagger.json --api-properties-file apiProperties.json
+```
+
+Then edit the connector in the portal > **Code** tab > toggle on > paste `script.csx` > select **InvokeMCP** > **Update connector**.
+
+#### Option B: Portal
 
 1. Go to [make.powerapps.com](https://make.powerapps.com/) > **Custom connectors**
 2. Select **New custom connector** > **Import an OpenAPI file**
@@ -147,16 +181,28 @@ Beyond tools, the connector exposes eight MCP resources for knowledge grounding.
 4. On the **Code** tab, paste the contents of `script.csx`
 5. Save and test
 
-### 2. Create a connection
+### 3. Create a connection
 
-When creating a connection, provide:
+When creating a connection, choose an authentication type:
+
+#### Option A: API key
 
 | Parameter | Value |
 |-----------|-------|
-| Search Service URL | `https://your-service.search.windows.net` |
 | API Key | Your admin or query API key from the Azure portal |
 
-Get your keys from the Azure portal: **Search service** > **Settings** > **Keys**.
+#### Option B: Microsoft Entra ID (OAuth)
+
+Requires an [Entra app registration](https://learn.microsoft.com/entra/identity-platform/quickstart-register-app) with:
+
+- API permissions: `https://search.azure.com/.default` (delegated)
+- Redirect URI: `https://global.consent.azure-apim.net/redirect`
+- RBAC roles on your search service: `Search Index Data Reader`, `Search Index Data Contributor`, or `Search Service Contributor`
+
+| Parameter | Value |
+|-----------|-------|
+| Client ID | Application (client) ID from your app registration |
+| Client Secret | Client secret from your app registration |
 
 ### 3. Add to Copilot Studio
 
@@ -167,7 +213,17 @@ Get your keys from the Azure portal: **Search service** > **Settings** > **Keys*
 
 ## Authentication
 
-This connector uses API key authentication. The API key is stored as a connection parameter and injected as the `api-key` header on every request. Use an admin key for full access to all operations or a query key for read-only search and document retrieval.
+This connector supports multi-auth—choose either method when creating a connection:
+
+### API key
+
+The API key is injected as the `api-key` header on every request. Use an admin key for full access to all operations or a query key for read-only search and document retrieval.
+
+Get your keys from the Azure portal: **Search service** > **Settings** > **Keys**.
+
+### Microsoft Entra ID (OAuth 2.0)
+
+Uses OAuth 2.0 with RBAC. The bearer token is forwarded on every request via the `Authorization` header. Requires [RBAC enabled](https://learn.microsoft.com/azure/search/search-security-enable-roles) on your search service and appropriate role assignments.
 
 ## Architecture
 
@@ -184,7 +240,7 @@ Copilot Studio Agent
     │
     ├─ launch_search({endpoint, method, body})
     │   ├─ Builds URL: {serviceUrl}/{endpoint}?api-version=2025-09-01
-    │   ├─ Injects api-key header from connection parameter
+    │   ├─ Forwards auth (api-key header or OAuth bearer token)
     │   ├─ Handles 429 retry with Retry-After
     │   └─ Summarizes response (strip HTML, truncate)
     │
