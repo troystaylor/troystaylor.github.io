@@ -6,13 +6,13 @@ categories: [Power Platform, Custom Connectors]
 tags: [MCP, Copilot Studio, custom connectors, template, progressive discovery, token optimization]
 ---
 
-Every MCP connector you've built with my Power MCP v2 template follows the same pattern: one `AddTool()` call per API operation, each with a full JSON Schema. For a five-tool connector, this works great. For an API with 30 operations, the `tools/list` response alone can consume 15,000 tokens of the planner's context window—before the agent even does anything.
+Every MCP connector you've built with my Power MCP v2 template follows the same pattern: one `AddTool()` call per API operation, each with a full JSON Schema. For a five-tool connector, this works great. For an API with 30 operations, the `tools/list` response alone can consume 15,000 tokens of the orchestrator's context window—before the agent even does anything.
 
-Power Mission Control changes this. Instead of registering dozens of typed tools, the template exposes three meta-tools that cover any API surface. The planner discovers operations on demand, so full schemas are never injected upfront.
+Power Mission Control changes this. Instead of registering dozens of typed tools, the template exposes three meta-tools that cover any API surface. The orchestrator discovers operations on demand, so full schemas are never injected upfront.
 
 ## The problem with typed tools at scale
 
-When Copilot Studio's planner calls `tools/list`, every registered tool dumps its name, description, and full input schema into the response. A 30-tool connector sends roughly 500 tokens per tool—15,000 tokens total. That's context window budget spent on tool definitions the planner may never use.
+When Copilot Studio's orchestrator calls `tools/list`, every registered tool dumps its name, description, and full input schema into the response. A 30-tool connector sends roughly 500 tokens per tool—15,000 tokens total. That's context window budget spent on tool definitions the orchestrator may never use.
 
 Worse, each new API operation you want to cover requires writing another `AddTool()` block with custom schema configuration, error handling, and response processing. The developer cost scales linearly with the API surface.
 
@@ -32,17 +32,17 @@ The `tools/list` payload drops from ~15,000 tokens to ~1,500—a 90% reduction o
 
 ## How discovery works
 
-Instead of pre-loading every schema, the planner asks `scan_{service}` what's available:
+Instead of pre-loading every schema, the orchestrator asks `scan_{service}` what's available:
 
 ```
 User: "Create a new customer"
-Planner → scan_apiservice({query: "create customer"})
-         ← Returns: endpoint /customers, method POST, required params [name, email]
-Planner → launch_apiservice({endpoint: "/customers", method: "POST", body: {...}})
+Orchestrator → scan_apiservice({query: "create customer"})
+              ← Returns: endpoint /customers, method POST, required params [name, email]
+Orchestrator → launch_apiservice({endpoint: "/customers", method: "POST", body: {...}})
          ← Returns: created customer record
 ```
 
-The scan tool searches your **capability index**—a JSON array of operation descriptions embedded in the connector. Each entry includes an endpoint, HTTP method, outcome description, domain tag, and parameter lists. The planner gets just enough context to select the right operation and request schemas only when needed.
+The scan tool searches your **capability index**—a JSON array of operation descriptions embedded in the connector. Each entry includes an endpoint, HTTP method, outcome description, domain tag, and parameter lists. The orchestrator gets just enough context to select the right operation and request schemas only when needed.
 
 ## Three discovery modes
 
@@ -128,7 +128,7 @@ The template handles common API patterns so you don't have to code them per-tool
 - **429 retry** - Up to three retries with `Retry-After` header support
 - **Error translation** - 401, 403, and 404 responses become friendly messages with fix suggestions
 - **Response summarization** - HTML stripping, whitespace collapsing, and field truncation to keep responses token-efficient
-- **Pagination detection** - Identifies `@odata.nextLink`, `nextLink`, and `next_page_url` patterns and tells the planner how to get more results
+- **Pagination detection** - Identifies `@odata.nextLink`, `nextLink`, and `next_page_url` patterns and tells the orchestrator how to get more results
 - **Smart defaults** - Auto-injects `$top` for GET collection endpoints and supports author-defined parameter injection per endpoint pattern
 - **Sequence operations** - Sequential execution or native `$batch` endpoint support with configurable size
 
