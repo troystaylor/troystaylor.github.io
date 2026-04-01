@@ -34,10 +34,10 @@ Full source: [GitHub repository](https://github.com/troystaylor/SharingIsCaring/
 ### How it works
 
 ```
-User: "Show me all purchase orders from Contoso that are still in draft"
+User: "Show me all purchase orders from Zava that are still in draft"
 
 1. Orchestrator calls list_purchase_orders({
-     supplier_name: "Contoso",
+     supplier_name: "Zava",
      status: "draft"
    })
    → Returns POs with number, status, supplier, total, and line items
