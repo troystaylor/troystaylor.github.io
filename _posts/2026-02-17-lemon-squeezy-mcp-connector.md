@@ -7,7 +7,7 @@ tags: [Lemon Squeezy, MCP, Custom Connectors, Power Platform, Copilot Studio, Di
 description: "Power Platform custom connector for Lemon Squeezy digital products platform with 35+ operations for products, subscriptions, license keys, discounts, and MCP tools for Copilot Studio."
 ---
 
-I looked at Stripe first. Great API, well-documented, but I didn't want to deal with sales tax compliance myself—calculating rates, filing returns, handling exemptions across jurisdictions. Lemon Squeezy is a merchant of record, which means they handle all of that. They collect payment, calculate and remit taxes, and send you the net amount. For digital products—software, courses, ebooks, memberships—it's one less thing to manage.
+When looking for payment processing for a side project, I looked at Stripe first. Great API, well-documented, but I didn't want to deal with sales tax compliance myself—calculating rates, filing returns, handling exemptions across jurisdictions. Lemon Squeezy is a merchant of record, which means they handle all of that. They collect payment, calculate and remit taxes, and send you the net amount. For digital products—software, courses, ebooks, memberships—it's one less thing to manage.
 
 This connector wraps 35+ operations across the Lemon Squeezy API into a Power Platform custom connector with MCP tools for Copilot Studio agents and Application Insights telemetry.
 

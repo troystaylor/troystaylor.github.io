@@ -7,11 +7,13 @@ tags: [Power MCP, MCP, Copilot Studio, Custom Connectors, Model Context Protocol
 description: "Power MCP Template v2 replaces manual tool wiring with a fluent AddTool API, a built-in McpRequestHandler, and a copilot-instructions.md file that teaches Copilot how to extend your connector."
 ---
 
-The [Power MCP Template](https://github.com/troystaylor/SharingIsCaring/tree/main/Connector-Code/Power%20MCP%20Template) now ships as v2. The original template worked, but adding a tool meant touching three places: build a JObject definition in `BuildToolsList()`, add a case to the switch in `ExecuteToolAsync()`, and write the handler method. Miss one step and the tool silently doesn't show up. You also had to remember which namespaces the Power Platform sandbox allows, how to avoid ambiguous type references, and where Copilot Studio diverges from the MCP spec—all on your own.
+The [Power MCP Template](https://github.com/troystaylor/SharingIsCaring/tree/main/Connector-Code/Power%20MCP%20Template) now ships as v2. Microsoft still hasn't added a `modelcontextprotocol` namespace to the namespaces available in custom connector code, so instead of waiting, v2 builds the MCP framework directly into the template. A reusable `McpRequestHandler` class handles the full protocol—when Microsoft does enable the official SDK, Section 1 of the script becomes a `using` statement instead of inline code.
+
+The original template worked, but adding a tool meant touching three places: build a JObject definition in `BuildToolsList()`, add a case to the switch in `ExecuteToolAsync()`, and write the handler method. Miss one step and the tool silently doesn't show up. You also had to remember which namespaces the Power Platform sandbox allows, how to avoid ambiguous type references, and where Copilot Studio diverges from the MCP spec—all on your own.
 
 v2 replaces that with a fluent `AddTool()` API that handles definition, routing, and schema in a single call. A reusable `McpRequestHandler` class owns the protocol so you never touch JSON-RPC wiring. And a `McpSchemaBuilder` gives you typed methods for strings, integers, arrays, and nested objects instead of raw JObject construction.
 
-The biggest addition is a `copilot-instructions.md` file that ships with the template. It teaches GitHub Copilot the sandbox constraints, the two-section file structure, and the exact patterns for adding tools. Drop the template into your project, ask Copilot to add a tool, and it generates sandbox-safe code with the right schema builder syntax—no hand-holding required.
+For some, the biggest addition to this folder is a `copilot-instructions.md` file that ships with the template. It teaches GitHub Copilot the sandbox constraints, the two-section file structure, and the exact patterns for adding tools. Drop the template into your project, ask Copilot to add a tool, and it generates sandbox-safe code with the right schema builder syntax—no hand-holding required.
 
 ## What changed
 
@@ -156,5 +158,4 @@ Drop the template folder into your project, and Copilot already knows the rules.
 
 - Power MCP Template: [github.com/troystaylor/SharingIsCaring/.../Power MCP Template](https://github.com/troystaylor/SharingIsCaring/tree/main/Connector-Code/Power%20MCP%20Template)
 - Original Power MCP post: [Power MCP: run MCP inside a Power Platform custom connector](https://troystaylor.com/power%20platform/custom%20connectors/2026-01-20-power-mcp-custom-connector.html)
-- MCP Apps variant: [MCP Apps support in Power MCP template](https://troystaylor.com/power%20platform/mcp/custom%20connectors/2026-01-27-mcp-apps-power-mcp-template.html)
 - MCP specification: [modelcontextprotocol.io](https://modelcontextprotocol.io/)

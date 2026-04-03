@@ -37,6 +37,16 @@ layout: post
 ---
 ```
 
+## Content lint (humanizer)
+
+Run a lightweight lint to catch AI-sounding phrasing before publishing:
+
+```powershell
+./scripts/humanizer-check.ps1
+```
+
+See `docs/humanizer.md` for patterns and options.
+
 ## Theme
 
 This blog uses the jekyll-gitbook theme as a remote theme. See the [theme documentation](https://github.com/sighingnow/jekyll-gitbook) for customization options.
