@@ -18,10 +18,6 @@ This blog covers technical topics including:
 
 Check out my [GitHub repository](https://github.com/troystaylor/SharingIsCaring) for code samples and connectors.
 
-## Stay in the loop
-
-{% include newsletter-signup.html %}
-
 ## Latest Posts
 
 {% for post in site.posts limit:5 %}
