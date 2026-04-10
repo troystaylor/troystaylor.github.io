@@ -74,6 +74,10 @@ ordered_collections:
 
 page_width: 800px
 
+# Newsletter (Brevo)
+newsletter:
+  form_action: https://46276788.sibforms.com/serve/MUIFAOreHiX7goW52vNFW18U5KwrwUfWg4-rQk1_pfo8QlvA2buTmSPlcm4KBWZ92n0CLOKNf088GlE1LDw6BASUUGOmERn3UozVE7VkH9GIY62hAVFZP5rAwsy0cmfbdXmSot1G4L7LF8xGaw1LKWmqBtRQC-Hvb8X2vPPBeJZhwpEbJNLHT2kVKGi0H-68mK3NYCastABTUPm9pA==
+
 destination:      ./_site
 incremental:      false
 regenerate:       true

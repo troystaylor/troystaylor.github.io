@@ -25,6 +25,8 @@
 
                     {{ content }}
 
+                    {%- include newsletter-signup.html -%}
+
                     {%- if jekyll.environment != 'dev' and site.disqushandler -%}
                         {%- include disqus.html -%}
                     {%- endif -%}
