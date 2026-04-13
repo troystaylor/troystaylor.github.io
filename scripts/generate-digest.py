@@ -126,6 +126,8 @@ def create_brevo_campaign(html_content, subject, api_key, list_id, sender_name, 
         },
         timeout=30,
     )
+    if not resp.ok:
+        print(f"Brevo API error ({resp.status_code}): {resp.text}")
     resp.raise_for_status()
     campaign_id = resp.json().get("id")
     print(f"Campaign created (id: {campaign_id}), scheduled for {send_at}")
