@@ -12,6 +12,12 @@ import requests
 
 POSTS_DIR = os.path.join(os.path.dirname(__file__), "..", "_posts")
 SITE_URL = "https://troystaylor.github.io"
+UNSUBSCRIBE_URL = (
+    "https://46276788.sibforms.com/serve/"
+    "MUIFAD-ZfuyKNkmaPt7Oll2slWL_amfQd4yHmds8eAgqu4uTT7we2ox7FSenyF_iFw78Owmn4WTmr_"
+    "3HYLHwjb3atnVR1_kSErE_jh66BC1FFE8zpQcNQMAHdO0kdGHM5Xx7caHDp5KBJk8U9DD-"
+    "814Yg32m1zhhmIYhk4Pu6bMZtDBSHY34qsIgTH7vfZfG15L8VAAD5f5WO1U7_Q=="
+)
 FILENAME_DATE_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})-(.+)\.md$")
 
 
@@ -43,19 +49,21 @@ def get_recent_posts(days=7):
         ) if categories else ""
         url = f"{SITE_URL}/{cat_path}/{match.group(1)}-{slug}.html"
 
-        # Extract first ~150 words as summary
-        content_text = post.content.strip()
-        words = content_text.split()[:150]
-        summary = " ".join(words)
-        if len(content_text.split()) > 150:
-            summary += "..."
+        # Use description from front matter, fall back to first ~50 words
+        description = post.get("description", "")
+        if not description:
+            content_text = post.content.strip()
+            words = content_text.split()[:50]
+            description = " ".join(words)
+            if len(content_text.split()) > 50:
+                description += "..."
 
         posts.append(
             {
                 "title": title,
                 "date": post_date.strftime("%B %d, %Y"),
                 "url": url,
-                "summary": summary,
+                "description": description,
                 "categories": categories,
             }
         )
@@ -73,16 +81,16 @@ def build_digest_markdown(posts):
     for post in posts:
         lines.append(f"## [{post['title']}]({post['url']})\n")
         lines.append(f"*{post['date']}*\n")
-        if post["categories"]:
-            tags = ", ".join(post["categories"])
-            lines.append(f"**Categories:** {tags}\n")
-        lines.append(f"{post['summary']}\n")
-        lines.append(f"[Read more]({post['url']})\n")
+        lines.append(f"{post['description']}\n")
+        lines.append(f"[Read more &rarr;]({post['url']})\n")
         lines.append("---\n")
 
     lines.append(
         f"\n*You received this because you subscribed to the "
         f"[Power Platform Integrations newsletter]({SITE_URL}).*\n"
+    )
+    lines.append(
+        f"\n[Unsubscribe]({UNSUBSCRIBE_URL})\n"
     )
 
     return "\n".join(lines)
@@ -169,9 +177,9 @@ def main():
         sys.exit(1)
 
     html_content = build_html(md_content)
-    subject = f"Weekly Digest: {posts[0]['title']}"
+    subject = f"Power Platform Integrations: {posts[0]['title']}"
     if len(posts) > 1:
-        subject = f"Weekly Digest: {len(posts)} new posts"
+        subject = f"Power Platform Integrations: {len(posts)} new posts this week"
 
     create_brevo_campaign(html_content, subject, api_key, list_id, sender_name, sender_email)
 
