@@ -163,7 +163,7 @@ Save these values for the next step:
 |---------|-------|
 | Scheme | HTTPS |
 | Host | `api.fabric.microsoft.com` |
-| Base URL | `/v1/mcp/core` |
+| Base URL | `/v1/mcp` |
 
 ### Security tab
 
