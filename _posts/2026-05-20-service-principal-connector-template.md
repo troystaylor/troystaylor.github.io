@@ -121,7 +121,7 @@ For more examples, see [Azure Service Principal Documentation](https://learn.mic
 
 This template simplifies the process of creating secure, scalable connectors for APIs secured with Azure AD. Start building your custom connector today!
 
-## Connecting to APIs via Azure API Management (APIM)
+## BONUS: Connecting to APIs via Azure API Management (APIM)
 
 Azure API Management (APIM) acts as a gateway for your APIs, providing centralized management, security, and monitoring. You can use the Service Principal Connector Template to connect to APIs through APIM, including third-party services like Salesforce.
 
@@ -148,7 +148,7 @@ Azure API Management (APIM) acts as a gateway for your APIs, providing centraliz
    - Use tools like Postman to test the API through APIM.
    - Verify that APIM forwards requests to the backend API.
 
-## Connecting to Salesforce via APIM
+## BONUS: Connecting to Salesforce via APIM
 
 You can use APIM as a gateway to connect to Salesforce APIs. This approach centralizes management and enhances security.
 
