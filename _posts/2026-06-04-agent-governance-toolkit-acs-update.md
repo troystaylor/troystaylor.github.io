@@ -7,7 +7,7 @@ tags: [Agent Governance, ACS, OWASP, MCP, Copilot Studio, Custom Connectors, Pow
 description: "Update to the Agent Governance Toolkit custom connector adds Agent Control Specification (ACS) lifecycle policies — three new operations covering manifest load, intervention evaluation, and payload transform across 8 lifecycle points with warn, escalate, and transform verdicts."
 ---
 
-The [Agent Governance Toolkit connector I shipped in April](https://troystaylor.com/power%20platform/custom%20connectors/2026-04-07-agent-governance-toolkit-mcp-connector.html) gave Copilot Studio agents and Power Automate flows seven per-tool governance checks: evaluate action, check compliance, score trust, detect injection, log audit, check circuit breaker, and scan MCP tool. Allow or deny, one tool call at a time.
+The [Agent Governance Toolkit MCP connector I shipped in April](https://troystaylor.com/power%20platform/custom%20connectors/2026-04-07-agent-governance-toolkit-mcp-connector.html) gave Copilot Studio agents and Power Automate flows seven per-tool governance checks: evaluate action, check compliance, score trust, detect injection, log audit, check circuit breaker, and scan MCP tool. Allow or deny, one tool call at a time.
 
 This update adds the [Agent Control Specification (ACS)](https://github.com/microsoft/agent-governance-toolkit/tree/main/policy-engine) — Microsoft's lifecycle-aware policy layer. A single YAML manifest now declares what to validate at each of 8 intervention points across `input → model → tool → output`, with verdicts that go beyond allow/deny: `warn`, `escalate`, and `transform`.
 
