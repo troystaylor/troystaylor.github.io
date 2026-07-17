@@ -5,6 +5,7 @@ date: 2026-07-17 10:00:00 -0500
 categories: [Power Platform, MCP]
 tags: [Cowork, MCP, Microsoft Scout, ACA Sandboxes, M365 Copilot, Azure Container Apps, Playwright]
 description: "A Copilot Cowork plugin that delivers Microsoft Scout-equivalent functionality — browser automation, code execution, document generation, M365 integration, and scheduled automations — using M365 Copilot Credits instead of a separate GitHub Copilot license."
+mermaid: true
 ---
 
 Microsoft Scout shipped in Frontier preview with browser automation, code execution, persistent memory, and M365 access. It's impressive — but it requires a GitHub Copilot Business or Enterprise license on top of your M365 Copilot license, runs only on desktop, needs Intune policy configuration, and routes LLM interactions through external AI models via the GitHub Copilot SDK.
