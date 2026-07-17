@@ -9,7 +9,7 @@ description: "A Copilot Cowork plugin that delivers Microsoft Scout-equivalent f
 
 Microsoft Scout shipped in Frontier preview with browser automation, code execution, persistent memory, and M365 access. It's impressive — but it requires a GitHub Copilot Business or Enterprise license on top of your M365 Copilot license, runs only on desktop, needs Intune policy configuration, and routes LLM interactions through external AI models via the GitHub Copilot SDK.
 
-Ranger delivers the same capabilities through Copilot Cowork using only M365 Copilot Credits you've already purchased. No additional licensing. No desktop app. No Intune enrollment. It works anywhere Cowork works — web, Teams, and mobile.
+Ranger delivers the same capabilities through Copilot Cowork using only M365 Copilot Credits you've already purchased. No additional licensing. No desktop app. No Intune enrollment. It works anywhere Cowork works — web, Teams, and mobile. You do need a small Azure footprint (a Container App and ACA Sandboxes — roughly $15-30/mo plus pay-per-use compute), but no per-user seat cost beyond what you're already paying for M365 Copilot.
 
 ## The licensing difference
 
