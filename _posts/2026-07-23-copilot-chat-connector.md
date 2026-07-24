@@ -4,7 +4,7 @@ title: "Microsoft 365 Copilot Chat connector for Power Platform"
 date: 2026-07-23 09:00:00 -0500
 categories: [Power Platform, Custom Connectors]
 tags: [Copilot, MCP, Custom Connectors, Power Platform, Copilot Studio, Microsoft Graph, Power Automate]
-description: "Power Platform custom connector for the Microsoft Graph beta Copilot Chat API. Send prompts to Microsoft 365 Copilot, run multi-turn conversations, add grounding context, and expose MCP tools for Copilot Studio."
+description: "Power Platform custom MCP connector for the Microsoft Graph beta Copilot Chat API. Send prompts to Microsoft 365 Copilot, run multi-turn conversations, add grounding context, and expose MCP tools for Copilot Studio."
 ---
 
 Microsoft 365 Copilot answers questions with your enterprise data behind it—your mail, calendar, chats, files, and people. The Graph beta Copilot Chat API lets you send prompts to that same engine from your own apps. This connector wraps that API for Power Platform, so you can ask Copilot from a Power Automate flow or hand three MCP tools to a Copilot Studio agent.
