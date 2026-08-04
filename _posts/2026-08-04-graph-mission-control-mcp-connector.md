@@ -231,6 +231,8 @@ Each user then connects the server themselves in **Copilot Chat** → **Settings
 
 Every user who queries the federated head needs a Microsoft 365 Copilot license. It's a flat per-user add-on rather than a per-call meter, so query volume costs nothing extra, but a tenant without it can't use this head at all. Check that first.
 
+Check the billing terms too, before you plan around a flat cost. Microsoft now meters several Copilot services with [Copilot Credits](https://learn.microsoft.com/en-us/microsoft-365/copilot/usage-based-billing-overview-copilot-credits), and a Copilot license doesn't always cover what a custom agent does. The [Work IQ API](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/work-iq/#access-and-pricing) bills on usage even for licensed users when a custom or third-party agent calls it.
+
 ## Behavior worth knowing
 
 - **Pagination.** `launch_graph` surfaces `@odata.nextLink` as `nextLink`. Pass it back as the endpoint to page forward. `fetch_work` accepts a continuation in `path` and passes it through untouched, since re-applying `$top` or `$select` would corrupt it.
