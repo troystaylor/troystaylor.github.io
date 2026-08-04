@@ -8,7 +8,11 @@ description: "A custom MCP connector that reaches 82 Microsoft Graph operations 
 mermaid: true
 ---
 
-Microsoft Graph has hundreds of operations. Register them as typed tools and an agent pays for every schema in its context window before it does any work. [Graph Mission Control](https://github.com/troystaylor/SharingIsCaring/tree/main/Graph%20Mission%20Control) registers three instead, and lets the model discover the rest on demand.
+Work IQ meters every question your agent asks. API access is independent of Microsoft 365 Copilot licensing and runs on [usage-based billing with Copilot Credits](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/work-iq/#access-and-pricing), and custom and third-party agents are billed on usage even when the user already holds a Copilot license. For reasoning across everything a person touches, that's a fair trade.
+
+Plenty of agent work is a plain read, though. What meetings are today, who reports to whom, every unread message from finance, when five people are free. Microsoft Graph answers those deterministically and consumes no credits doing it.
+
+Surface area is what makes that hard. Graph has hundreds of operations, and registering them as typed tools means an agent pays for every schema in its context window before it does any work. [Graph Mission Control](https://github.com/troystaylor/SharingIsCaring/tree/main/Graph%20Mission%20Control) registers three instead, and lets the model discover the rest on demand.
 
 It's built on the [Power Mission Control Template](https://github.com/troystaylor/SharingIsCaring/tree/main/Connector-Code/Power%20Mission%20Control%20Template), so the protocol and framework details live there. This post covers what's specific to Graph.
 
