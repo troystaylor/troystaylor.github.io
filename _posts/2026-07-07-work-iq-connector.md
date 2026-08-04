@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Building a Work IQ connector for Power Platform and Copilot Studio"
+title: "Work IQ connector: Microsoft 365 workplace intelligence in Power Platform"
 date: 2026-07-07 16:00:00 -0500
 categories: [Power Platform, MCP]
 tags: [Work IQ, MCP, Copilot Studio, Custom Connectors, A2A, Microsoft 365, Power Automate]
@@ -111,7 +111,11 @@ pac connector create `
 
 ## Billing
 
-Work IQ API usage is billed via [Copilot Credits](https://learn.microsoft.com/en-us/microsoft-365/copilot/usage-based-billing-overview-copilot-credits). Each query consumes credits based on the complexity of reasoning required.
+Work IQ API access is independent of Microsoft 365 Copilot licensing, and you pay for it through a [usage-based model that uses Copilot Credits](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/work-iq/api-overview#licensing-requirements). Each query consumes credits based on the complexity of reasoning required, so cost tracks volume rather than seats.
+
+A Copilot license doesn't exempt you. Licensed users get Work IQ across every Microsoft 365 Copilot experience and agent, but [custom and third-party agents are subject to usage-based billing](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/work-iq/#access-and-pricing)—which is what this connector is. Users without a Copilot license are billed on usage as well.
+
+Sort this out before you schedule a flow against it. An admin enables usage-based billing in the [Microsoft 365 admin center](https://learn.microsoft.com/en-us/microsoft-365/copilot/usage-based-billing-overview-copilot-credits) and sets the spending policies, budgets, and caps that decide who can consume and how much. The Cost Management dashboard reports consumption by user, group, service, or agent, which is where a flow that asks Work IQ a question every five minutes shows up.
 
 ## Use cases
 
