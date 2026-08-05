@@ -8,7 +8,9 @@ description: "Version 1.1 of the Power Platform Admin custom MCP connector adds 
 mermaid: true
 ---
 
-**Draw from Tenant Pool** decides whether an environment spends Copilot Studio messages and sessions from your tenant capacity pool. The Power Platform admin center exposes it one environment at a time. If you run 40 environments and one agent in a sandbox is draining shared capacity, turning the setting off everywhere but production means 40 trips through the UI.
+**Draw from Tenant Pool** decides whether an environment spends Copilot Credits from your tenant capacity pool. That pool is enforced monthly, unused credits don't roll over, and the [August 2026 licensing guide](https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/bade/documents/products-and-services/en-us/ai/Microsoft-Copilot-Studio-Licensing-Guide-August-2026.pdf) is blunt about the consequence of going over: technical enforcement, up to service denial. One environment overspending is a tenant-wide problem.
+
+The Power Platform admin center exposes the setting one environment at a time. If you run 40 environments and one agent in a sandbox is draining shared capacity, turning it off everywhere but production means 40 trips through the UI.
 
 [Power Platform Admin v1.1](https://github.com/troystaylor/SharingIsCaring/tree/main/Power%20Platform%20Admin) adds two tools for that setting. The same release makes the connector dual-mode, so Power Automate gets typed actions next to the MCP endpoint that Copilot Studio uses.
 
@@ -27,7 +29,7 @@ The [original post](/power%20platform/custom%20connectors/mcp/2026-05-13-power-p
 
 | Tool | Description |
 |------|-------------|
-| `admin_get_tenant_pool_draw` | Check whether an environment draws Copilot Studio message and session capacity from the tenant pool |
+| `admin_get_tenant_pool_draw` | Check whether an environment draws Copilot Credit capacity from the tenant pool |
 | `admin_set_tenant_pool_draw` | Turn that draw on or off |
 
 Both act on two entitlements, `MCSMessages` and `MCSSessions`, because the single toggle in the admin center covers both:
@@ -36,6 +38,8 @@ Both act on two entitlements, `MCSMessages` and `MCSSessions`, because the singl
 private static readonly string[] TENANT_POOL_ENTITLEMENTS =
     { "MCSMessages", "MCSSessions" };
 ```
+
+Those IDs are older than the billing vocabulary. Microsoft renamed Copilot Studio messages to Copilot Credits in September 2025, and the current licensing guide has no message or session meter left in it—one credit pack is 25,000 Copilot Credits per month, and pay-as-you-go bills at $0.01 per credit. The entitlement IDs on the API never followed the rename, so the connector uses the names the service still answers to.
 
 ## This route is unsupported
 
@@ -194,4 +198,5 @@ Set the `clientId` in `apiProperties.json` to your app registration before you r
 - [Power Platform API reference](https://learn.microsoft.com/power-platform/admin/programmability-and-extensibility/powerplatform-api-reference)
 - [Permissions reference](https://learn.microsoft.com/power-platform/admin/programmability-permission-reference)
 - [Currency Allocation, the supported licensing allocation API](https://learn.microsoft.com/rest/api/power-platform/licensing/currency-allocation)
+- [Microsoft Copilot Studio Licensing Guide, August 2026](https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/bade/documents/products-and-services/en-us/ai/Microsoft-Copilot-Studio-Licensing-Guide-August-2026.pdf)
 - [FAQ for Copilot Studio billing and licensing](https://learn.microsoft.com/microsoft-copilot-studio/faq-billing-licensing)
