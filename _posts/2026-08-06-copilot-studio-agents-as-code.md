@@ -68,10 +68,10 @@ Read the caveats on that inclusion before you plan around it. It's business-to-e
 
 ```mermaid
 flowchart TD
-    A[New agent] --> B{Needs goal decomposition,<br/>Word/Excel/PDF generation,<br/>memory, or step recovery?}
+    A[New agent] --> B{Complex<br/>reasoning?}
     B -->|Yes| C[GitHub Copilot harness<br/>Metered from first build action]
     B -->|No| D[Standard harness<br/>Free to iterate until publish]
-    D --> E{Employee-facing, users hold<br/>M365 Copilot licenses?}
+    D --> E{M365 Copilot<br/>licensed?}
     E -->|Yes| F["$0 runtime"]
     E -->|No| G[Pay per credit]
 ```
