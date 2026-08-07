@@ -3,7 +3,7 @@ layout: post
 title: "Update custom connector OAuth identity providers with PAC CLI"
 date: 2026-08-07 13:00:00 -0400
 categories: [Power Platform, Custom Connectors]
-tags: [PAC CLI, OAuth, Custom Connectors, Salesforce, Power Automate, Copilot Studio]
+tags: [PAC CLI, OAuth, PKCE, Custom Connectors, Power Automate, Copilot Studio]
 description: "Use Power Platform CLI to set an OAuth identity provider in apiProperties.json when the Power Platform custom connector UI doesn't offer the provider you need."
 ---
 
@@ -34,6 +34,7 @@ The `identityProvider` value selects the runtime OAuth implementation. Connector
 |---|---|
 | `aad` | Microsoft Entra ID OAuth |
 | `oauth2` | Generic OAuth 2.0 |
+| `oauth2pkce` | Generic OAuth 2.0 with PKCE |
 | `oauth2generic` | Template-based generic OAuth configuration |
 | `DocuSign` | DocuSign-specific OAuth behavior |
 | `SalesforceV2` | Salesforce OAuth |
@@ -94,7 +95,7 @@ Open `connector\apiProperties.json`. Find:
 properties.connectionParameters.token.oAuthSettings
 ```
 
-Change `identityProvider` and retain the connection parameters required by the provider. The following example configures `SalesforceV2`:
+Change `identityProvider` and retain the connection parameters required by the provider. The following example configures `oauth2pkce`:
 
 ```json
 {
@@ -103,17 +104,23 @@ Change `identityProvider` and retain the connection parameters required by the p
       "token": {
         "type": "oauthSetting",
         "oAuthSettings": {
-          "identityProvider": "SalesforceV2",
+          "identityProvider": "oauth2pkce",
           "clientId": "YOUR_CLIENT_ID",
           "clientSecret": "YOUR_CLIENT_SECRET",
           "scopes": [
-            "api refresh_token"
+            "read write offline_access"
           ],
           "redirectMode": "GlobalPerConnector",
           "redirectUrl": "https://global.consent.azure-apim.net/redirect/UNIQUE_IDENTIFIER_FOR_THIS_ENVIRONMENT",
           "customParameters": {
-            "LoginUri": {
-              "value": "https://login.salesforce.com"
+            "AuthorizationUrl": {
+              "value": "https://api.contoso.com/oauth2/authorize"
+            },
+            "TokenUrl": {
+              "value": "https://api.contoso.com/oauth2/token"
+            },
+            "RefreshUrl": {
+              "value": "https://api.contoso.com/oauth2/token"
             }
           },
           "properties": {
@@ -127,14 +134,18 @@ Change `identityProvider` and retain the connection parameters required by the p
 }
 ```
 
-Retain the environment-specific `redirectUrl` from the downloaded connector and register the same URL in the provider's OAuth application. For Salesforce:
+`oauth2pkce` generates the code verifier for you. It appends `code_challenge` and `code_challenge_method=S256` to the authorization request and sends `code_verifier` on the token exchange, so don't add those values yourself.
 
-- Use `https://login.salesforce.com` for production
-- Use `https://test.salesforce.com` for a sandbox
-- Use `api refresh_token` for Salesforce REST APIs
-- Use `mcp_api refresh_token` for Salesforce Hosted MCP Servers
+The provider requires `AuthorizationUrl`, `TokenUrl`, and `RefreshUrl`. Two optional parameters are also available:
 
-Store the client secret outside source control and inject it during deployment.
+- `IdpHint` sends an `idp_hint` value on the authorization request
+- `Audience` sends an `audience` value on the authorization request
+
+`clientSecret` is optional. Omit it for a public client that authenticates with PKCE alone.
+
+Retain the environment-specific `redirectUrl` from the downloaded connector and register the same URL in the provider's OAuth application. Store the client secret outside source control and inject it during deployment.
+
+The provider has no token introspection, so Power Platform learns the token lifetime only from an `expires_in` value in the token response. If the authorization server returns an opaque token without `expires_in`, the connection goes stale instead of refreshing.
 
 ## 4. Upload the updated API properties
 
@@ -196,5 +207,5 @@ pac connector update `
 - [Microsoft Power Platform Connectors samples](https://github.com/microsoft/PowerPlatformConnectors)
 - [DocuSign identity provider sample](https://github.com/microsoft/PowerPlatformConnectors/blob/dev/certified-connectors/DocuSignDemo/apiProperties.json)
 - [Template-based OAuth sample](https://github.com/microsoft/PowerPlatformConnectors/blob/dev/certified-connectors/GetAccept/apiProperties.json)
-- [Salesforce Hosted MCP connector](https://github.com/troystaylor/SharingIsCaring/tree/main/Salesforce%20Hosted%20MCP)
+- [PKCE (RFC 7636)](https://datatracker.ietf.org/doc/html/rfc7636)
 - [Power Platform connector CLI commands reference](/power%20platform/custom%20connectors/2026/06/10/power-platform-connector-cli-commands-reference.html)
