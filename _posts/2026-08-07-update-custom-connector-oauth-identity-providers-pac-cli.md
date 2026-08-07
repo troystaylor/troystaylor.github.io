@@ -95,7 +95,7 @@ Open `connector\apiProperties.json`. Find:
 properties.connectionParameters.token.oAuthSettings
 ```
 
-Change `identityProvider` and retain the connection parameters required by the provider. The following example configures `oauth2pkce`:
+Change `identityProvider` and retain the connection parameters required by the provider. The following example configures `oauth2pkce`, which the designer doesn't list:
 
 ```json
 {
@@ -108,18 +108,18 @@ Change `identityProvider` and retain the connection parameters required by the p
           "clientId": "YOUR_CLIENT_ID",
           "clientSecret": "YOUR_CLIENT_SECRET",
           "scopes": [
-            "read write offline_access"
+            "YOUR_REQUIRED_SCOPES"
           ],
           "redirectMode": "GlobalPerConnector",
           "redirectUrl": "https://global.consent.azure-apim.net/redirect/UNIQUE_IDENTIFIER_FOR_THIS_ENVIRONMENT",
           "customParameters": {
-            "AuthorizationUrl": {
+            "authorizationUrl": {
               "value": "https://api.contoso.com/oauth2/authorize"
             },
-            "TokenUrl": {
+            "tokenUrl": {
               "value": "https://api.contoso.com/oauth2/token"
             },
-            "RefreshUrl": {
+            "refreshUrl": {
               "value": "https://api.contoso.com/oauth2/token"
             }
           },
@@ -134,18 +134,33 @@ Change `identityProvider` and retain the connection parameters required by the p
 }
 ```
 
-`oauth2pkce` generates the code verifier for you. It appends `code_challenge` and `code_challenge_method=S256` to the authorization request and sends `code_verifier` on the token exchange, so don't add those values yourself.
+The provider accepts these parameters:
 
-The provider requires `AuthorizationUrl`, `TokenUrl`, and `RefreshUrl`. Two optional parameters are also available:
+| Parameter | Required | Purpose |
+|---|---|---|
+| `clientId` | Yes | Client ID registered with the authorization server |
+| `clientSecret` | No | Client secret, sent on the token and refresh requests |
+| `authorizationUrl` | Yes | Authorization endpoint |
+| `tokenUrl` | Yes | Token endpoint |
+| `refreshUrl` | Yes | Refresh endpoint, often the same as the token endpoint |
+| `idpHint` | No | Sends `idp_hint` on the authorization request |
+| `audience` | No | Sends `audience` on the authorization request |
 
-- `IdpHint` sends an `idp_hint` value on the authorization request
-- `Audience` sends an `audience` value on the authorization request
+`clientSecret` is optional, so a public client can authenticate with PKCE alone. Set `clientId`, `authorizationUrl`, `tokenUrl`, and `refreshUrl` or the connection fails validation.
 
-`clientSecret` is optional. Omit it for a public client that authenticates with PKCE alone.
+The provider generates the code verifier for you. It appends `code_challenge` and `code_challenge_method=S256` to the authorization request and sends `code_verifier` on the token exchange, so don't add those values yourself. Entries in `scopes` are joined with a space.
+
+Requests the provider builds:
+
+- Authorization: `client_id`, `response_type=code`, `redirect_uri`, `scope`, `state`, `code_challenge`, `code_challenge_method`, `idp_hint`, `audience`
+- Token: `code`, `grant_type=authorization_code`, `redirect_uri`, `client_id`, `client_secret`, `code_verifier`
+- Refresh: `refresh_token`, `grant_type=refresh_token`, `client_id`, `client_secret`
+
+Both the token and refresh requests send the client secret in the body, so the authorization server has to accept `client_secret_post`. A server that requires HTTP Basic client authentication won't work with this provider.
 
 Retain the environment-specific `redirectUrl` from the downloaded connector and register the same URL in the provider's OAuth application. Store the client secret outside source control and inject it during deployment.
 
-The provider has no token introspection, so Power Platform learns the token lifetime only from an `expires_in` value in the token response. If the authorization server returns an opaque token without `expires_in`, the connection goes stale instead of refreshing.
+The provider has no token introspection, so Power Platform learns the token lifetime only from an `expires_in` value in the token response. If the authorization server returns an opaque token without `expires_in`, the connection goes stale instead of refreshing. The connection display name also comes from the `unique_name` claim in an OpenID token, so an opaque access token leaves the name blank.
 
 ## 4. Upload the updated API properties
 
