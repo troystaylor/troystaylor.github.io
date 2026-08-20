@@ -10,9 +10,14 @@ description: >
 version:          1.0
 gitbook_version:  3.2.3
 
-url:              'https://troystaylor.github.io'
+url:              'https://troystaylor.com'
 baseurl:          ''
 rss:              RSS
+
+# Atom feed (jekyll-feed)
+feed:
+  path:           feed.xml
+  posts_limit:    20
 
 # Use the jekyll-gitbook remote theme
 remote_theme: sighingnow/jekyll-gitbook
