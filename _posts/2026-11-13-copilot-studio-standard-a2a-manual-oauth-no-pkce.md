@@ -111,6 +111,18 @@ If you need a reference, create a test A2A connection in the Microsoft Copilot h
 
 Keep your edited `apiProperties.json` in source control. The Microsoft Copilot harness wizard [discards the connector](https://learn.microsoft.com/microsoft-copilot-studio/agents-experience/add-agent-to-agent) it built from earlier settings when you change the authentication settings, so a later wizard edit can undo your change.
 
+## Get a PKCE connector for any REST API
+
+The same idea works for a plain REST API behind a PKCE-only authorization server, with no hand-written `apiProperties.json`. Let the MCP wizard build the PKCE connector, then swap its operations for yours:
+
+1. In Copilot Studio, add an MCP server by using the authorization server's details. Choose **Manual** for `oauth2pkce`, or a DCR option for `oauth2pkcewithdcr`.
+2. In Power Automate, open **Custom connectors** and edit the connector the wizard created.
+3. Delete the MCP operation, the one marked `x-ms-agentic-protocol: mcp-streamable-1.0`.
+4. Add your API's operations, and update the host and base path if they differ.
+5. Create a new connection and test.
+
+Don't open or edit the **Security** tab. In testing, the connector kept its PKCE identity provider as long as that tab stayed untouched. Download the connector with PAC CLI afterward and confirm `identityProvider` is still `oauth2pkce` or `oauth2pkcewithdcr`.
+
 ## Check your own connectors
 
 To audit what's already deployed, download each A2A and MCP connector and read `identityProvider`:
